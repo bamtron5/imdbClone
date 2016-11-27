@@ -1,0 +1,16 @@
+#home .movie-list {
+  display: flex;
+  justify-content: space-around;
+  flex-direction: row;
+  flex-wrap: wrap
+}
+
+#home .movie-list > li {
+  flex: 50;
+  justify-content: space-around;
+  flex-direction: column;
+}
+
+#home .movie-list {
+  list-style: none;
+}

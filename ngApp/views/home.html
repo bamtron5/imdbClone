@@ -1,0 +1,28 @@
+<h1>IMDB CLONE</h1>
+<form ng-submit="controller.movieAdd()">
+<label>Title</label>
+<input type="text" ng-model="controller.newMovie.title">
+<hr/>
+    <label>Director</label>
+<input type="text" ng-model="controller.newMovie.director">
+<hr/>
+<label>picture</label>
+<input type="text" ng-model="controller.newMovie.picture">
+<button type="submit">Search/Add</button>
+</form>
+<ul class="movie-list">
+    <li ng-repeat="movie in controller.movies">
+        {{movie.title}}: {{movie.director}}
+        <hr/>
+        <img ng-src="{{movie.picture}}"  style="max-width:200px" />
+        <a href="/edit/{{movie._id}}">Edit</a>
+        <a href="#" ng-click="controller.removeMovie(movie._id)">Delete</a>
+        <form>  
+            <input ng-change="controller.sendRating(movie)" ng-model="movie.rating" label="1" type="radio" name="ratings" value="1">
+            <input ng-change="controller.sendRating(movie)" ng-model="movie.rating" label="2" type="radio" name="ratings" value="2">
+            <input ng-change="controller.sendRating(movie)" ng-model="movie.rating" label="3" type="radio" name="ratings" value="3">
+            <input ng-change="controller.sendRating(movie)" ng-model="movie.rating" label="4" type="radio" name="ratings" value="4">
+            <input ng-change="controller.sendRating(movie)" ng-model="movie.rating" label="5" type="radio" name="ratings" value="5">            
+        </form>
+    </li>
+</ul>
