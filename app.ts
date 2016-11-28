@@ -12,6 +12,10 @@ import routes from './routes/index';
 import users from './routes/users';
 
 let app = express();
+
+require("./models/user");
+require("./config/passport");
+
 const MONGO_URI = "mongodb://webuser:secret@ds145415.mlab.com:45415/moviesdb";
 mongoose.connect(MONGO_URI).then(() => {
   console.log('mongoose connected');
