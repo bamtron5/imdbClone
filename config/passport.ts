@@ -2,7 +2,7 @@ import passport = require('passport');
 import mongoose = require('mongoose');
 let LocalStrategy = require('passport-local').Strategy;
 let FacebookStrategy = require('passport-facebook').Strategy;
-let User = require('../models/user');
+let User = require('../models/users');
 
 passport.serializeUser(function(user, done) {
   done(null, user);

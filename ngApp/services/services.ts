@@ -1,5 +1,24 @@
 namespace imdbclone.Services {
 
+    export class UserService {
+      private LoginResource;
+      private RegisterResource;
+
+      public login(user) {
+        return this.LoginResource.save(user).$promise;
+      }
+
+      public register(user) {
+        return this.RegisterResource.save(user).$promise;
+      }
+
+      constructor($resource: ng.resource.IResourceService) {
+        this.LoginResource = $resource('/api/Login/Local');
+        this.RegisterResource = $resource('/api/Register');
+      }
+    }
+    angular.module('imdbclone').service('userService', UserService);
+
     export class MovieService {
         private MovieResource;
         public storeMovie(movie) {
@@ -25,8 +44,4 @@ namespace imdbclone.Services {
         }
     }
     angular.module('imdbclone').service('movieService', MovieService);
-    export class MyService {
-
-    }
-    angular.module('imdbclone').service('myService', MyService);
-    }
+}

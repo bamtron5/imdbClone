@@ -9,7 +9,6 @@ export interface IUser extends mongoose.Document {
   salt: String
 }
 
-
 let UserSchema = new mongoose.Schema({
   username: { type: String, lowercase: true, unique: true},
   email: { type: String, unique: true, lowercase: true },

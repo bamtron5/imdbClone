@@ -19,6 +19,18 @@ namespace imdbclone {
                 controller: imdbclone.Controllers.EditController,
                 controllerAs: 'controller'
             })
+            .state('register', {
+              url: '/register',
+              templateUrl: '/ngApp/views/register.html',
+              controller: imdbclone.Controllers.UserController,
+              controllerAs: 'controller'
+            })
+            .state('login', {
+              url: '/login',
+              templateUrl: '/ngApp/views/login.html',
+              controller: imdbclone.Controllers.UserController,
+              controllerAs: 'controller'
+            })
             .state('notFound', {
                 url: '/notFound',
                 templateUrl: '/ngApp/views/notFound.html'
@@ -31,6 +43,6 @@ namespace imdbclone {
         $locationProvider.html5Mode(true);
     });
 
-    
+
 
 }

@@ -7,16 +7,16 @@ import * as bodyParser from 'body-parser';
 import * as ejs from 'ejs';
 import * as movies from './api/movies';
 import * as mongoose from 'mongoose';
-
+import passport = require("passport");
 import routes from './routes/index';
-import users from './routes/users';
 
 let app = express();
 
-require("./models/user");
+//user model and auth for passport
+require("./models/users");
 require("./config/passport");
 
-const MONGO_URI = "mongodb://webuser:secret@ds145415.mlab.com:45415/moviesdb";
+const MONGO_URI = "mongodb://localhost:27017/imdbclone";
 mongoose.connect(MONGO_URI).then(() => {
   console.log('mongoose connected');
 }).catch((err) => {
@@ -29,18 +29,25 @@ app.set('view engine', 'ejs');
 
 // uncomment after placing your favicon in /public
 //app.use(favicon(path.join(__dirname, 'public', 'favicon.ico')));
+
+//initializer methods for express
 app.use(logger('dev'));
 app.use(bodyParser.json());
+app.use(passport.initialize());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser());
+
+app.set('trust proxy', 1) // trust first proxy
+console.log(passport);
+
+//pathing
 app.use(express.static(path.join(__dirname, 'public')));
 app.use('/bower_components', express.static(path.join(__dirname, 'bower_components')));
 app.use('/ngApp', express.static(path.join(__dirname, 'ngApp')));
 app.use('/api', express.static(path.join(__dirname, 'api')));
 
+//routes
 app.use('/', routes);
-app.use('/users', users);
-
 
 // APIs
 app.use('/api', require('./api/makes'));
@@ -49,6 +56,7 @@ app.use('/api', require('./api/movies'));
 app.use('/api', require('./api/genres'));
 app.use('/api', require('./api/guestbook'));
 app.use('/api', require('./api/deepThought'));
+app.use('/api/', require('./api/users'));
 
 // redirect 404 to home for the sake of AngularJS client-side routes
 app.get('/*', function(req, res, next) {
