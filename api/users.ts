@@ -22,12 +22,9 @@ router.post('/Login/Local', function(req, res, next) {
   if(!req.body.username || !req.body.password) return res.status(400).send("Please fill out every field");
   passport.authenticate('local', function(err, user, info) {
     console.log('--= Passport Auth =--');
-    console.log(user);
     if(err) return next(err);
     if(user) {
       let token = user.generateJWT();
-      // cookieParser
-      console.log(cookieParser);
       return res.json({ token: token });
     }
       return res.status(400).send(info);

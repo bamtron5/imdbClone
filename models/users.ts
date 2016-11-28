@@ -31,7 +31,7 @@ UserSchema.method('generateJWT', function() {
     id: this._id,
     username: this.username,
     email: this.email
-  }, 'SecretKey');
+  }, 'SecretKey', {expiresIn: '2 days'});
 });
 
 module.exports = mongoose.model<IUser>("User", UserSchema);

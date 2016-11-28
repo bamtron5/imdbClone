@@ -1,12 +1,9 @@
 import express = require('express');
 let router = express.Router();
 import Movie from '../models/Movie';
+import passport = require('passport');
 
-
-
-
-
-let movies = [  
+let movies = [
   {director:'John Carpenter', title:'The Thing'},
   {director: 'Adam Sandler', title:'Happy Gilmore'},
   {director: 'Adam Sandler', title: 'Waterboy'},
@@ -20,6 +17,8 @@ Movie.find({}).remove(( ) => {
 
 /* GET movies */
 router.get('/movies', function(req, res, next) {
+  console.log('== GET MOVIES ==');
+  // console.log(req.cookies.token);
   Movie.find().then((movies) => {
     res.json(movies)
   }).catch((err) => {

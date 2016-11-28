@@ -37,8 +37,10 @@ app.use(passport.initialize());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser());
 
+//checking passport
+//passport.authenticate('jwt', { session: false })
+
 app.set('trust proxy', 1) // trust first proxy
-console.log(passport);
 
 //pathing
 app.use(express.static(path.join(__dirname, 'public')));
