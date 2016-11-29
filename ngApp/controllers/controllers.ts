@@ -1,26 +1,27 @@
 namespace imdbclone.Controllers {
     export class UserController {
-      public helloworld;
       public user;
 
       public login(user) {
         this.userService.login(user).then((res) => {
-          console.log(res);
+          this.$state.go('home');
         }).catch((err) => {
-          console.log(err);
+          alert('Bunk login, please try again.');
         });
       }
 
       public register(user) {
         this.userService.register(user).then((res) => {
-          console.log(res);
+          this.$state.go('login');
         }).catch((err) => {
-          console.log(err);
+          alert('Registration error: please try again.');
         });
       }
 
-      constructor(private userService:imdbclone.Services.UserService) {
-        this.helloworld = 'helloworld';
+      constructor(
+        private userService:imdbclone.Services.UserService,
+        private $state: ng.ui.IStateService
+      ) {
       }
     }
 
@@ -58,7 +59,7 @@ namespace imdbclone.Controllers {
         }
 
         constructor(private movieService:imdbclone.Services.MovieService) {
-           this.currentMovies()
+           this.currentMovies();
         }
     }
 
@@ -71,7 +72,7 @@ namespace imdbclone.Controllers {
                 console.log("edited");
                 this.$state.go("home");
             }).catch((err) => {
-                console.log(err)
+                console.log(err);
             })
         }
 
@@ -80,7 +81,7 @@ namespace imdbclone.Controllers {
             private $state: ng.ui.IStateService,
             private $stateParams: ng.ui.IStateParamsService
         ) {
-            console.log($stateParams)
+            console.log($stateParams);
             let movieId = $stateParams['id'];
             this.movieService.getMovie(movieId).then((movie) => {
                 this.movie = movie;

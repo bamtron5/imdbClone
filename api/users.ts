@@ -25,7 +25,7 @@ router.post('/Login/Local', function(req, res, next) {
     if(err) return next(err);
     if(user) {
       let token = user.generateJWT();
-      res.cookie('token', JSON.stringify(token));
+      res.cookie('token', token);
       return res.json({ token: token });
     }
       return res.status(400).send(info);
