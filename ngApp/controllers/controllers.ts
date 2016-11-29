@@ -41,7 +41,7 @@ namespace imdbclone.Controllers {
             console.log(this.$rootScope['currentUser']);
             this.$state.go('home');
           }).catch((err) => {
-            //TODO logout and notify
+            this.logout();
           });
         }).catch((err) => {
           alert('Bunk login, please try again.');
@@ -58,6 +58,7 @@ namespace imdbclone.Controllers {
 
       public logout() {
         //destroy the cookie
+        this.$rootScope['currentUser'] = null;
         this.CookieService.remove('token');
         this.$state.go('home');
       }

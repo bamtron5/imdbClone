@@ -8,7 +8,7 @@ let User = require('../models/users');
 let router = express.Router();
 
 router.get('/:id', function(req, res, next) {
-  User.findOne(req.params._id).then((user) => {
+  User.findOne(req.params._id).select('-passwordHash -salt').then((user) => {
     return res.status(200).send({user: user});
   }).catch((err) => {
     return res.status(404).send({err: 'User not found.'})
@@ -34,8 +34,6 @@ router.post('/Login/Local', function(req, res, next) {
     if(user) {
       let token = user.generateJWT();
       res.cookie('token', token);
-      //TODO !!!
-      //this return should not contain the salt or the hash
       return res.json({ token: token, _id: user._id});
     }
       return res.status(400).send(info);
