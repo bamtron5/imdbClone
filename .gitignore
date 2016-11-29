@@ -5,3 +5,5 @@
 .env
 npm-debug.log
 .vscode
+tsconfig.json
+.editorconfig

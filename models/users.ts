@@ -9,6 +9,8 @@ export interface IUser extends mongoose.Document {
   salt: String
 }
 
+//TODO !!! passwordHash and salt should be protected
+
 let UserSchema = new mongoose.Schema({
   username: { type: String, lowercase: true, unique: true},
   email: { type: String, unique: true, lowercase: true },

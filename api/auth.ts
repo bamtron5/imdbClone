@@ -17,7 +17,7 @@ function isAuthenticated (req, res, next) {
 
   return jwt.verify(token, 'SecretKey', (err, user) => {
     if (err) return next(err);
-    if (!user) return res.sendStatus('401', { message: 'Unauthorized'});
+    if (!user) return res.status(401).send({ message: 'Unauthorized'});
     return next();
   });
 }

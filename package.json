@@ -8,6 +8,7 @@
   "dependencies": {
     "@types/angular": "^1.5.13",
     "@types/angular-animate": "^1.5.4",
+    "@types/angular-cookies": "^1.4.2",
     "@types/angular-resource": "^1.5.4",
     "@types/angular-ui-bootstrap": "^0.13.33",
     "@types/angular-ui-router": "^1.1.33",
