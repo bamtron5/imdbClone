@@ -18,7 +18,7 @@ namespace imdbclone.Services {
         return this.UserResource.get(id).$promise;
       }
 
-      constructor($cookies: ng.cookies.ICookiesService, $resource: ng.resource.IResourceService) {
+      constructor($resource: ng.resource.IResourceService) {
         this.LoginResource = $resource('/api/Login/Local');
         this.RegisterResource = $resource('/api/Register');
         this.UserResource = $resource('/api/users/:id');

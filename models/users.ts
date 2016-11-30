@@ -18,11 +18,11 @@ let UserSchema = new mongoose.Schema({
 
 UserSchema.method('setPassword', function(password) {
   this.salt = crypto.randomBytes(16).toString('hex');
-  this.passwordHash = crypto.pbkdf2Sync(password, this.salt, 1000, 64).toString('hex');
+  this.passwordHash = crypto.pbkdf2Sync(password, this.salt, 1000, 64, 'sha512').toString('hex');
 });
 
 UserSchema.method('validatePassword', function(password) {
-  let hash = crypto.pbkdf2Sync(password, this.salt, 1000, 64).toString('hex');
+  let hash = crypto.pbkdf2Sync(password, this.salt, 1000, 64, 'sha512').toString('hex');
   return (hash === this.passwordHash);
 });
 

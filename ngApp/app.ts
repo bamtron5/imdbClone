@@ -65,12 +65,3 @@ namespace imdbclone {
   }]);
 }
 
-window['ngList'] = function allServices(mod, r) {
- var inj = angular.element(document).injector().get;
- if (!r) r = {};
- angular.forEach(angular.module(mod).requires, function(m) {allServices(m,r)});
- angular.forEach(angular.module(mod)._invokeQueue, function(a) {
-   try { r[a[2][0]] = inj(a[2][0]); } catch (e) {}
- });
- return r;
-};

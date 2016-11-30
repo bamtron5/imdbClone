@@ -16,7 +16,7 @@ let app = express();
 require("./models/users");
 require("./config/passport");
 
-const MONGO_URI = "mongodb://localhost:27017/imdbclone";
+const MONGO_URI = "mongodb://webuser:secret@ds113608.mlab.com:13608/psalty";
 mongoose.connect(MONGO_URI).then(() => {
   console.log('mongoose connected');
 }).catch((err) => {

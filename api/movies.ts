@@ -2,7 +2,7 @@ import express = require('express');
 let router = express.Router();
 import Movie from '../models/Movie';
 import passport = require('passport');
-let auth = require('./auth');
+let auth = require('./methods');
 
 let movies = [
     { director: 'John Carpenter', title: 'The Thing' },
@@ -16,7 +16,7 @@ Movie.find({}).remove(() => {
     });
 });
 
-/* GET movies */
+/* GET movies  with changes*/
 router.get('/movies', auth.isAuthenticated, function(req, res, next) {
     console.log('== GET MOVIES ==');
     Movie.find().then((movies) => {
