@@ -52,6 +52,7 @@ namespace imdbclone.Controllers {
         this.userService.register(user).then((res) => {
           this.$state.go('login');
         }).catch((err) => {
+          console.log(err);
           alert('Registration error: please try again.');
         });
       }

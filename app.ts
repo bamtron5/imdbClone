@@ -7,25 +7,32 @@ import * as bodyParser from 'body-parser';
 import * as ejs from 'ejs';
 import * as movies from './api/movies';
 import * as mongoose from 'mongoose';
-import passport = require("passport");
+import * as passport from 'passport';
+import * as acl from 'acl';
+import * as colors from 'colors';
+import Permission from './config/permission';
 import routes from './routes/index';
 
 let app = express();
 
-//user model and auth for passport
-require("./models/users");
+//config for pass port
 require("./config/passport");
-
-const MONGO_URI = "mongodb://webuser:secret@ds113608.mlab.com:13608/psalty";
-mongoose.connect(MONGO_URI).then(() => {
-  console.log('mongoose connected');
-}).catch((err) => {
-  console.log(err);
-});
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'ejs');
+
+const MONGO_URI = "mongodb://coder:camps@ds115738.mlab.com:15738/imdbclone";
+let dbc = mongoose.connect(MONGO_URI);
+
+mongoose.connection.on('connected', () => {
+  Permission.setPermission(dbc);
+});
+
+mongoose.connection.on('error', (err) => {
+  console.log('mongoose error');
+  console.log(err);
+});
 
 // uncomment after placing your favicon in /public
 //app.use(favicon(path.join(__dirname, 'public', 'favicon.ico')));
@@ -36,9 +43,6 @@ app.use(bodyParser.json());
 app.use(passport.initialize());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser());
-
-//checking passport
-//passport.authenticate('jwt', { session: false })
 
 app.set('trust proxy', 1) // trust first proxy
 
@@ -58,7 +62,7 @@ app.use('/api', require('./api/movies'));
 app.use('/api', require('./api/genres'));
 app.use('/api', require('./api/guestbook'));
 app.use('/api', require('./api/deepThought'));
-app.use('/api/', require('./api/users'));
+app.use('/api', require('./api/users'));
 
 // redirect 404 to home for the sake of AngularJS client-side routes
 app.get('/*', function(req, res, next) {

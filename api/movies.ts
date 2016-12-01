@@ -1,23 +1,25 @@
 import express = require('express');
 let router = express.Router();
 import Movie from '../models/Movie';
-import passport = require('passport');
-let auth = require('./methods');
+import * as passport from 'passport';
+import methods from './methods';
+import * as acl from 'acl';
+import * as mongoose from 'mongoose';
 
 let movies = [
-    { director: 'John Carpenter', title: 'The Thing' },
-    { director: 'Adam Sandler', title: 'Happy Gilmore' },
-    { director: 'Adam Sandler', title: 'Waterboy' },
-    { director: 'Eli Roth', title: 'Hostel' }
+  { director: 'John Carpenter', title: 'The Thing' },
+  { director: 'Adam Sandler', title: 'Happy Gilmore' },
+  { director: 'Adam Sandler', title: 'Waterboy' },
+  { director: 'Eli Roth', title: 'Hostel' }
 ];
 Movie.find({}).remove(() => {
-    movies.map((movie, key) => {
-        Movie.create(movie);
-    });
+  movies.map((movie, key) => {
+      Movie.create(movie);
+  });
 });
 
 /* GET movies  with changes*/
-router.get('/movies', auth.isAuthenticated, function(req, res, next) {
+router.get('/movies', methods.isAuthenticated, function(req, res, next) {
     console.log('== GET MOVIES ==');
     Movie.find().then((movies) => {
         res.json(movies)
@@ -48,34 +50,9 @@ router.post('/movies', (req, res, next) => {
         });
 });
 
-// router.post('/movies', function(req, res, next) {
-//   let movie = req.body;
-//   // update existing movie
-//   if (movie._id) {
-//     //TODO: fix this later. Make it nice and DRY.
-//     Movie.update({_id:movie._id}, {title:movie.title, director:movie.director, picture: movie.picture})
-//     .then((results) => {
-//       res.sendStatus(200);
-//     }).catch((err) => {
-//       console.log('meh', err);
-//     });
-//   // create new movie
-//   } else {
-//     Movie.create({title:movie.title, director:movie.director, picture: movie.picture}).then((results) => {
-//       Movie.find().then((movies) => {
-//         res.json({data:movies});
-//       }).catch((err) => {
-//         console.log('rrrrgh', err);
-//       });
-//     }).catch((err) => {
-//       console.log('blech', err);
-//     });
-//   }
-// });
-
-router.delete('/movies/:_id', (req, res) => {
+router.delete('/movies/:_id', methods.checkAcl, (req, res, next) => {
+    console.log('deletingMovie');
     let movieId = req.params._id;
-    console.log(req.params)
     Movie.remove({ _id: movieId }).then(() => {
         res.sendStatus(200);
     }).catch((err) => {
