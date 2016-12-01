@@ -13,6 +13,17 @@ import * as colors from 'colors';
 import Permission from './config/permission';
 import routes from './routes/index';
 
+//TODO install dotenv
+// - loads .env
+let dotenv = require('dotenv');
+dotenv.load();
+// console.log(process.env);
+
+//TODO logging color
+colors.setTheme({
+  warn: 'red'
+});
+
 let app = express();
 
 //config for pass port
@@ -22,8 +33,7 @@ require("./config/passport");
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'ejs');
 
-const MONGO_URI = "mongodb://coder:camps@ds115738.mlab.com:15738/imdbclone";
-let dbc = mongoose.connect(MONGO_URI);
+let dbc = mongoose.connect(process.env.MONGO_URI);
 
 mongoose.connection.on('connected', () => {
   Permission.setPermission(dbc);

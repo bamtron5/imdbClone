@@ -2,12 +2,17 @@ namespace imdbclone.Services {
 
     export class UserService {
       private LoginResource;
+      private LogoutResource;
       private RegisterResource;
       private UserResource;
       public isLoggedIn;
 
       public login(user) {
         return this.LoginResource.save(user).$promise;
+      }
+
+      public logout() {
+        return this.LogoutResource.get().$promise;
       }
 
       public register(user) {
@@ -19,6 +24,7 @@ namespace imdbclone.Services {
       }
 
       constructor($resource: ng.resource.IResourceService) {
+        this.LogoutResource = $resource('/api/Logout/Local');
         this.LoginResource = $resource('/api/Login/Local');
         this.RegisterResource = $resource('/api/Register');
         this.UserResource = $resource('/api/users/:id');

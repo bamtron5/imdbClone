@@ -33,12 +33,11 @@ namespace imdbclone.Controllers {
       //   };
 
       public login(user) {
-        this.userService.login(user).then((res) => {
+        this.UserService.login(user).then((res) => {
           this.CookieService.put('token', res.token);
           this.UserService.getUser(res._id).then((user) => {
-            this.$rootScope['currentUser'] = user.user;
-            console.log('-- Current User in $rootScope --');
-            console.log(this.$rootScope['currentUser']);
+            //TODO set currentUser session
+            //
             this.$state.go('home');
           }).catch((err) => {
             this.logout();
@@ -59,9 +58,15 @@ namespace imdbclone.Controllers {
 
       public logout() {
         //destroy the cookie
-        this.$rootScope['currentUser'] = null;
-        this.CookieService.remove('token');
-        this.$state.go('home');
+        //TODO POST to /Logout and destroy more session stuff
+        this.UserService.logout().then((res) => {
+          this.CookieService.remove('token');
+          this.$state.go('home');
+        }).catch((err) => {
+          //TODO error handler
+          console.log(err);
+        });
+
       }
 
       constructor(

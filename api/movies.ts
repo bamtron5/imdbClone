@@ -22,9 +22,9 @@ Movie.find({}).remove(() => {
 router.get('/movies', methods.isAuthenticated, function(req, res, next) {
     console.log('== GET MOVIES ==');
     Movie.find().then((movies) => {
-        res.json(movies)
+      res.json(movies);
     }).catch((err) => {
-        console.log('WARNING:', err)
+      res.status(500).send({err: err});
     })
 });
 

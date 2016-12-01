@@ -2,6 +2,8 @@ import * as mongoose from 'mongoose';
 import * as crypto from 'crypto';
 import * as jwt from 'jsonwebtoken';
 
+//TODO return get currentUser from model
+
 export interface IUser extends mongoose.Document {
   username: { type: String, lowercase: true, unique: true},
   email: { type: String, unique: true, lowercase: true },
@@ -21,7 +23,7 @@ let UserSchema = new mongoose.Schema({
   id: { type: String, getter: function(val) { return this._id.toString(); }, unique: true }
 },
 {
-  id: false
+  id: false //non virtual
 });
 
 UserSchema.method('setPassword', function(password) {
@@ -31,8 +33,8 @@ UserSchema.method('setPassword', function(password) {
 
 UserSchema.method('validatePassword', function(password) {
   let hash = crypto.pbkdf2Sync(password, this.salt, 1000, 64, 'sha512').toString('hex');
-  console.log('HASH:', hash);
-  console.log('passwordHASH:', this.passwordHash);
+  // console.log('HASH:', hash);
+  // console.log('passwordHASH:', this.passwordHash);
   return (hash === this.passwordHash);
 });
 
@@ -42,7 +44,7 @@ UserSchema.method('generateJWT', function() {
     _id: this._id,
     username: this.username,
     email: this.email
-  }, 'SecretKey', {expiresIn: '2 days'});
+  }, process.env.JWT_SECRET, {expiresIn: '2 days'});
 });
 
 UserSchema.pre('save', function(next) {

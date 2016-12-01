@@ -15,12 +15,12 @@ export default class Permission {
 
 
     console.log('\n-==settingPermissions==-\n'.yellow);
-    this.backend.allow('user', 'movies', ['get', 'post', 'put']);
-
+    this.backend.allow('user', 'movies', ['get', 'post', 'put', 'delete']);
+    console.log('¯\_(ツ)_/¯ - log yourself'.red);
     //ONE TIME COMMANDS TO REMOVE AN `allow` param from a resource
     //make sure you remove it from the allow command and `rs` you nodemon
     // this.backend.removeAllow('user', 'movies', ['delete']);
-
+    // console.log('\n-==removingPermissions==-\n'.red);
     console.log('\n-==permissionsSet==-\n'.yellow);
 
 
@@ -32,9 +32,9 @@ export default class Permission {
     // });
 
     //permission check movies for user role permissions
-    this.backend.allowedPermissions('583f9eb5d80ac112a898a61a', 'movies', function(err, permissions){
-      console.log('Permissions: '.yellow, JSON.stringify(permissions, null, 3).gray);
-    });
+    // this.backend.allowedPermissions('583f9eb5d80ac112a898a61a', 'movies', function(err, permissions){
+    //   console.log('Permissions: '.yellow, JSON.stringify(permissions, null, 3).gray);
+    // });
 
 
     //check for all roles of user

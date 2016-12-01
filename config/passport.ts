@@ -4,6 +4,8 @@ let LocalStrategy = require('passport-local').Strategy;
 let FacebookStrategy = require('passport-facebook').Strategy;
 import User from '../models/User';
 
+//TODO not used, jwt is doing it
+// - consider ditching jwt for this?
 passport.serializeUser(function(user, done) {
   done(null, user);
 });

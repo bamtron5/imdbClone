@@ -6,8 +6,7 @@ import * as cookieParser from 'cookie-parser';
 import * as session from 'express-session';
 import * as acl from 'acl';
 import Permission from '../config/permission';
-//TODO method to retrieve user if requested
-
+import methods from './methods';
 import User from '../models/User';
 let router = express.Router();
 
@@ -16,6 +15,14 @@ router.get('/users/:id', function(req, res, next) {
     return res.status(200).send({user: user});
   }).catch((err) => {
     return res.status(404).send({err: 'User not found.'})
+  });
+});
+
+router.get('/me', methods.isAuthenticated, function(req, res, next) {
+  User.findOne({_id: req.user._id}).select('-passwordHash -salt').then((user) => {
+    return res.status(200).send({me: user});
+  }).catch((err) =>{
+    return res.status(401).send({message: `Unauthorized`, err: err})
   });
 });
 
@@ -38,21 +45,22 @@ router.post('/Login/Local', function(req, res, next) {
   if(!req.body.username || !req.body.password) return res.status(400).send("Please fill out every field");
   passport.authenticate('local', function(err, user, info) {
     console.log('--= Passport Auth =--');
-    console.log('err:', err);
-    console.log('user:', user);
-    console.log('info:', info);
     if(err) return next(err);
     if(user) {
-      //TODO setting session here for express
       let token = user.generateJWT();
-      console.log('token granted:', token);
 
-      //setting client headers cookie value
+      //set cookie for token
       res.cookie('token', token);
+      console.log('token granted for: ', user.username);
       return res.json({ token: token, _id: user._id});
     }
       return res.status(400).send(info);
   })(req, res, next);
+});
+
+router.get('/Logout/Local', function(req, res, next) {
+  res.clearCookie('token');
+  return res.status(200).send({message: 'logged out'});
 });
 
 router.get('/auth/facebook', passport.authenticate('facebook', { scope: [ 'email' ] }));
