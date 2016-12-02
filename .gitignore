@@ -8,3 +8,4 @@ npm-debug.log
 tsconfig.json
 .editorconfig
 .travisAnswers
+.nvmrc

@@ -7,35 +7,38 @@ import Permission from '../config/permission';
 import * as colors from 'colors';
 
 /*
-  TODO set req.user
+  TODO set req.user √
   TODO access control list for user roles √
-  - npm i --save acl
-  - npm i --save express-session ??
+  - npm i --save acl √
   - https://www.npmjs.com/package/acl
   TODO
-  gem install travis -v 1.8.4 --no-rdoc --no-ri
+  gem install travis -v 1.8.4 --no-rdoc --no-ri √
   or google heroku
   TODO
-  npm i --save dotenv @types/dotenv
+  npm i --save dotenv @types/dotenv √
 */
 
 function isAuthenticated (req, res, next) {
+  console.log('checking authentication'.yellow);
   let token = '';
 
   if(req.headers['authorization']) {
     token = req.headers.authorization.split('Bearer ')[1];
   }
 
-  if(req.headers['cookie']) {
+  if(req.headers['cookie'] && req.headers['cookie'].indexOf('token') > -1) {
+
     let findToken = req.headers['cookie'].split(' ').filter((v, k) => {
      return v.split('=')[0] === 'token';
     });
     token = findToken.length >= 1 ? findToken[0].split('=')[1].split(';')[0] : '';
   }
 
+  if(token === '') return res.status(204).end();
+
   return jwt.verify(token, process.env.JWT_SECRET, (err, user) => {
     if (err) return next(err);
-    if (!user) return res.status(401).send({ message: 'Unauthorized'});
+    if (!user) return res.status(204).end();
     req.user = user;
     req.headers.authorization = `Bearer ${token}`;
     return next();
@@ -65,11 +68,13 @@ function checkAcl (req, res, next) {
     token = findToken.length >= 1 ? findToken[0].split('=')[1].split(';')[0] : '';
   }
 
+  if(token === '') return res.status(204).send({message: 'No token.'});
+
   //headers bearer value must be set to token during this req.
   //TODO this secret should be generated better and placed in .env
   jwt.verify(token, process.env.JWT_SECRET, (err, user) => {
     if (err) return next(err);
-    if (!user) return res.status(401).send({ message: 'Unauthorized'});
+    if (!user) return res.status(401).end();
     //jwt returns a decrypted user
     userId = user.id;
     req.user = user;
@@ -84,8 +89,8 @@ function checkAcl (req, res, next) {
     Permission.backend.isAllowed(userId, path, method, (err, allowed) => {
       let _color = (allowed ? 'true'.green : 'false'.red);
       console.log(`Allowed = `.cyan + _color);
-      if(err) return res.status(401).send({message: 'Permission check failed.'});
-      if(!allowed) return res.status(401).send({message: 'Unauthorized request.'})
+      if(err) return res.status(401).end();
+      if(!allowed) return res.status(401).end();
       if(allowed) return next();
     });
   });

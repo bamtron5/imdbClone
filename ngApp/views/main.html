@@ -1,0 +1,8 @@
+<div style="border: red 1px solid; padding: 10px;">
+  <h4>Nested ui</h4>
+  <div ng-if="vm.currentUser.user.username">
+    <pre>{{vm.currentUser | json:4}}</pre>
+    <h3>Current user: {{vm.currentUser.user.username}}</h3>
+  </div>
+</div>
+<ui-view></ui-view>

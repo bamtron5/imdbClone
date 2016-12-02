@@ -1,8 +1,7 @@
-import * as express from 'express';
+import express = require('express');
 import * as mongoose from 'mongoose';
 import * as passport from 'passport';
 import * as jwt from 'jsonwebtoken';
-import * as cookieParser from 'cookie-parser';
 import * as session from 'express-session';
 import * as acl from 'acl';
 import Permission from '../config/permission';
@@ -12,17 +11,17 @@ let router = express.Router();
 
 router.get('/users/:id', function(req, res, next) {
   User.findOne(req.params._id).select('-passwordHash -salt').then((user) => {
-    return res.status(200).send({user: user});
+    return res.status(200).send({"user": user});
   }).catch((err) => {
     return res.status(404).send({err: 'User not found.'})
   });
 });
 
-router.get('/me', methods.isAuthenticated, function(req, res, next) {
+router.get('/currentuser', methods.isAuthenticated, function(req, res, next) {
   User.findOne({_id: req.user._id}).select('-passwordHash -salt').then((user) => {
-    return res.status(200).send({me: user});
+    return res.send({"user": user});
   }).catch((err) =>{
-    return res.status(401).send({message: `Unauthorized`, err: err})
+    return res.status(100).send({"message": `Unauthorized`, err: err})
   });
 });
 
@@ -34,7 +33,7 @@ router.post('/Register', function(req, res, next) {
   user.save(function(err, user) {
     if(err) return next(err);
     console.log('-==new User==-');
-    console.log(user);
+    console.log(user.username);
     //add acl role
     Permission.backend.addUserRoles(user._id.toHexString(), 'user');
     res.status(200).send({message: "Registration complete."});
@@ -50,7 +49,15 @@ router.post('/Login/Local', function(req, res, next) {
       let token = user.generateJWT();
 
       //set cookie for token
-      res.cookie('token', token);
+      req.session.regenerate(function(err) {
+        console.log('testing for unexp server cookie');
+      });
+
+      req.session.save(function(err) {
+        console.log('session saved');
+        console.log('session err:', err);
+      });
+      
       console.log('token granted for: ', user.username);
       return res.json({ token: token, _id: user._id});
     }
@@ -59,8 +66,13 @@ router.post('/Login/Local', function(req, res, next) {
 });
 
 router.get('/Logout/Local', function(req, res, next) {
-  res.clearCookie('token');
-  return res.status(200).send({message: 'logged out'});
+  req.logout();
+
+  req.session.destroy((err) => {
+    if (err) return res.status(500).send({message: 'still authenticated, please try again.'});
+    req.user = null;
+    return res.redirect('/');
+  });
 });
 
 router.get('/auth/facebook', passport.authenticate('facebook', { scope: [ 'email' ] }));

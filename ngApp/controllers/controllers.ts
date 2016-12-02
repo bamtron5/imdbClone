@@ -1,47 +1,22 @@
 namespace imdbclone.Controllers {
+    export class MainController {
+      public currentUser;
+      constructor(currentUser: ng.ui.IResolvedState) {
+        this.currentUser = currentUser;
+      }
+    }
+
     export class UserController {
       public user;
       public currentUser;
       public UserService;
       public CookieService;
-
-      //TODO authInterceptor
-      // .factory('authInterceptor', function ($rootScope, $q, $cookieStore, $location) {
-      //   return {
-      //     // Add authorization token to headers
-      //     request: function (config) {
-      //       config.headers = config.headers || {};
-      //       if ($cookieStore.get('token')) {
-      //         config.headers.Authorization = 'Bearer ' + $cookieStore.get('token');
-      //       }
-      //       return config;
-      //     },
-      //
-      //     // Intercept 401s/500s and redirect you to login
-      //     responseError: function(response) {
-      //       if(response.status === 401) {
-      //         $location.path('/login');
-      //         // remove any stale tokens
-      //         $cookieStore.remove('token');
-      //         return $q.reject(response);
-      //       } else if(response.status === 500){
-      //         $location.path('/');
-      //       } else {
-      //         return $q.reject(response);
-      //       }
-      //     }
-      //   };
+      public isLoggedIn;
 
       public login(user) {
         this.UserService.login(user).then((res) => {
           this.CookieService.put('token', res.token);
-          this.UserService.getUser(res._id).then((user) => {
-            //TODO set currentUser session
-            //
-            this.$state.go('home');
-          }).catch((err) => {
-            this.logout();
-          });
+          this.$state.transitionTo('main.home', null, {reload: true, notify:true});
         }).catch((err) => {
           alert('Bunk login, please try again.');
         });
@@ -49,7 +24,7 @@ namespace imdbclone.Controllers {
 
       public register(user) {
         this.userService.register(user).then((res) => {
-          this.$state.go('login');
+          this.$state.go('main.login');
         }).catch((err) => {
           console.log(err);
           alert('Registration error: please try again.');
@@ -61,7 +36,7 @@ namespace imdbclone.Controllers {
         //TODO POST to /Logout and destroy more session stuff
         this.UserService.logout().then((res) => {
           this.CookieService.remove('token');
-          this.$state.go('home');
+          this.$state.transitionTo('main.home', null, {reload: true, notify:true});
         }).catch((err) => {
           //TODO error handler
           console.log(err);
@@ -77,6 +52,7 @@ namespace imdbclone.Controllers {
       ) {
         this.UserService = userService;
         this.CookieService = $cookies;
+        // this.isLoggedIn = $state.data.currentUser
       }
     }
 
@@ -115,8 +91,13 @@ namespace imdbclone.Controllers {
             })
         }
 
-        constructor(private movieService:imdbclone.Services.MovieService) {
+        constructor(
+          private currentUser: ng.ui.IResolvedState,
+          private movieService:imdbclone.Services.MovieService,
+          private $state: ng.ui.IStateService
+        ) {
            this.currentMovies();
+           this.currentUser = currentUser;
         }
     }
 
