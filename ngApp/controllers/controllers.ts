@@ -1,7 +1,23 @@
 namespace imdbclone.Controllers {
     export class MainController {
       public currentUser;
-      constructor(currentUser: ng.ui.IResolvedState) {
+
+      logout() {
+        this.userService.logout().then((res) => {
+          this.$cookies.remove('token');
+          this.$state.transitionTo('main.home', null, {reload: true, notify:true});
+        }).catch((err) => {
+          //TODO error handler
+          console.log(err);
+        });
+      }
+
+      constructor(
+        currentUser: ng.ui.IResolvedState,
+        private userService: imdbclone.Services.UserService,
+        private $cookies: ng.cookies.ICookiesService,
+        private $state: ng.ui.IStateService
+      ) {
         this.currentUser = currentUser;
       }
     }

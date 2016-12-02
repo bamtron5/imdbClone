@@ -1,5 +1,13 @@
 <div style="border: red 1px solid; padding: 10px;">
-  <h4>Nested ui</h4>
+  <h1>imdbclone</h1>
+  <div>
+    <a href="/">Home</a>
+    <a href="/about">About</a>
+    <a ng-if="!vm.currentUser.user" href="/login">Login</a>
+    <a ng-if="!vm.currentUser.user" href="/register">Register</a>
+    <button ng-if="vm.currentUser.user" ng-click="vm.logout()">Logout</button>
+  </div>
+  <hr />
   <div ng-if="vm.currentUser.user.username">
     <pre>{{vm.currentUser | json:4}}</pre>
     <h3>Current user: {{vm.currentUser.user.username}}</h3>
