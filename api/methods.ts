@@ -6,18 +6,6 @@ import * as acl from 'acl';
 import Permission from '../config/permission';
 import * as colors from 'colors';
 
-/*
-  TODO set req.user √
-  TODO access control list for user roles √
-  - npm i --save acl √
-  - https://www.npmjs.com/package/acl
-  TODO
-  gem install travis -v 1.8.4 --no-rdoc --no-ri √
-  or google heroku
-  TODO
-  npm i --save dotenv @types/dotenv √
-*/
-
 function isAuthenticated (req, res, next) {
   console.log('checking authentication'.yellow);
   let token = '';
@@ -71,7 +59,6 @@ function checkAcl (req, res, next) {
   if(token === '') return res.status(204).send({message: 'No token.'});
 
   //headers bearer value must be set to token during this req.
-  //TODO this secret should be generated better and placed in .env
   jwt.verify(token, process.env.JWT_SECRET, (err, user) => {
     if (err) return next(err);
     if (!user) return res.status(401).end();

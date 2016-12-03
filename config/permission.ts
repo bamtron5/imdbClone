@@ -15,7 +15,7 @@ export default class Permission {
 
 
     console.log('\n-==settingPermissions==-\n'.yellow);
-    this.backend.allow('user', 'movies', ['get', 'post', 'put', 'delete']);
+    this.backend.allow('user', 'movies', ['get', 'post', 'put']);
     console.log('¯\_(ツ)_/¯ - log yourself'.red);
     //ONE TIME COMMANDS TO REMOVE AN `allow` param from a resource
     //make sure you remove it from the allow command and `rs` you nodemon

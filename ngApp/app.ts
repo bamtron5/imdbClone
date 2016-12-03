@@ -17,7 +17,7 @@ namespace imdbclone {
           controller: imdbclone.Controllers.MainController,
           controllerAs: 'vm',
           resolve: {
-            currentUser: ['userService', function(userService) {
+            currentUser: ['userService', '$cookieStore', function(userService, $cookieStore) {
               return userService.getCurrentUser();
             }]
           }
@@ -59,48 +59,53 @@ namespace imdbclone {
       $locationProvider.html5Mode(true);
 
       //for authInterceptor factory
-      // $httpProvider.interceptors.push('authInterceptor');
-    }).run([
+      $httpProvider.interceptors.push('authInterceptor');
+    }).factory('authInterceptor', function ($q, $cookies, $location) {
+      return {
+        // Add authorization token to headers
+        request: function (config) {
+          //because cookies are set by server to client
+          //$cookieStore is worthlesss
+          let cOne = document.cookie.split(';');
+          let cTwo = _.map(cOne, (v) => {
+             return v.split('=');
+          })
+          let cObj = {};
+          _.forEach(cTwo, (v) => {
+            cObj[v[0]] = v[1];
+          });
+
+          config.headers = config.headers || {};
+          if (cObj['token']) {
+            config.headers.Authorization = 'Bearer ' + cObj['token'];
+          }
+
+          console.log(config);
+          return config;
+        },
+
+        // Intercept 401s/500s and redirect you to login
+        responseError: function(response) {
+          if(response.status === 401) {
+            alert('unauthorized.  please bounce.');
+            $location.path('/login');
+            // good place to explain to the user why or redirect
+            // remove any stale tokens
+            $cookies.token;
+            return $q.reject(response);
+          } else {
+            return $q.reject(response);
+          }
+        }
+      }
+    })
+
+    .run([
       '$rootScope', '$location', 'movieService', 'auth', 'userService',
       function($rootScope, $location, movieService, Auth, UserService) {
       // Redirect to login if route requires auth and you're not logged in
       $rootScope.$on('$stateChangeStart', function (event, next) {
-        console.log(`GOING TO: ${next.url}`, );
-        // Auth.isLoggedInAsync(function(loggedIn) {
-        //   console.log('loggedIn', loggedIn);
-        //   if (next.authenticate && !loggedIn) {
-        //     $location.path('/login');
-        //   }
-        // });
+        console.log(`GOING TO: ${next.url}`);
       });
   }]);
 }
-
-
-
-//TODO authInterceptor
-// .factory('authInterceptor', function ($rootScope, $q, $cookieStore, $location) {
-//   return {
-//     // Add authorization token to headers
-//     request: function (config) {
-//       config.headers = config.headers || {};
-//       if ($cookieStore.get('token')) {
-//         config.headers.Authorization = 'Bearer ' + $cookieStore.get('token');
-//       }
-//       return config;
-//     },
-//
-//     // Intercept 401s/500s and redirect you to login
-//     responseError: function(response) {
-//       if(response.status === 401) {
-//         $location.path('/login');
-//         // remove any stale tokens
-//         $cookieStore.remove('token');
-//         return $q.reject(response);
-//       } else if(response.status === 500){
-//         $location.path('/');
-//       } else {
-//         return $q.reject(response);
-//       }
-//     }
-//   };
