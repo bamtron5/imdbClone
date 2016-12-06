@@ -12,7 +12,6 @@ import * as colors from 'colors';
 import Permission from './config/permission';
 import routes from './routes/index';
 import * as session from 'express-session';
-import * as uuid from 'uuid';
 const MongoStore = require('connect-mongo')(session);
 
 //loggin style

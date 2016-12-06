@@ -22,11 +22,11 @@ function isAuthenticated (req, res, next) {
     token = findToken.length >= 1 ? findToken[0].split('=')[1].split(';')[0] : '';
   }
 
-  if(token === '') return res.status(204).end();
+  if(token === '') return res.status(401).end();
 
   return jwt.verify(token, process.env.JWT_SECRET, (err, user) => {
     if (err) return next(err);
-    if (!user) return res.status(204).end();
+    if (!user) return res.status(401).end();
     req.user = user;
     req.headers.authorization = `Bearer ${token}`;
     return next();
@@ -56,7 +56,7 @@ function checkAcl (req, res, next) {
     token = findToken.length >= 1 ? findToken[0].split('=')[1].split(';')[0] : '';
   }
 
-  if(token === '') return res.status(204).send({message: 'No token.'});
+  if(token === '') return res.status(401).send({message: 'No token.'});
 
   //headers bearer value must be set to token during this req.
   jwt.verify(token, process.env.JWT_SECRET, (err, user) => {
@@ -76,8 +76,8 @@ function checkAcl (req, res, next) {
     Permission.backend.isAllowed(userId, path, method, (err, allowed) => {
       let _color = (allowed ? 'true'.green : 'false'.red);
       console.log(`Allowed = `.cyan + _color);
-      if(err) return res.status(401).end();
-      if(!allowed) return res.status(401).end();
+      if(err) return res.status(500).send({message: 'Permission error.'});
+      if(!allowed) return res.status(403).end();
       if(allowed) return next();
     });
   });

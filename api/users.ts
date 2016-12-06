@@ -57,9 +57,9 @@ router.post('/Login/Local', function(req, res, next) {
         console.log('session saved');
         console.log('session err:', err);
       });
-      
+
       console.log('token granted for: ', user.username);
-      return res.json({ token: token, _id: user._id});
+      return res.json({ token: token});
     }
       return res.status(400).send(info);
   })(req, res, next);

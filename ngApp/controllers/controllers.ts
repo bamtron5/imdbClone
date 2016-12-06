@@ -48,8 +48,6 @@ namespace imdbclone.Controllers {
       }
 
       public logout() {
-        //destroy the cookie
-        //TODO POST to /Logout and destroy more session stuff
         this.UserService.logout().then((res) => {
           this.CookieService.remove('token');
           this.$state.transitionTo('main.home', null, {reload: true, notify:true});
@@ -95,7 +93,7 @@ namespace imdbclone.Controllers {
           this.movieService.deleteMovie(movieId).then(() => {
               this.currentMovies();
           }).catch((err) => {
-            console.log(err);
+            //console.log(err);
           });
         }
 
@@ -103,7 +101,7 @@ namespace imdbclone.Controllers {
              this.movieService.listMovies().then((movies) => {
                 this.movies = movies;
             }).catch((err) => {
-                console.log(err)
+                //console.log(err)
             })
         }
 

@@ -1,4 +1,5 @@
 namespace imdbclone {
+  //TODO components
   angular.module('imdbclone', ['ui.router', 'ngResource', 'ngCookies'])
     .config((
       $resourceProvider: ng.resource.IResourceServiceProvider,
@@ -16,9 +17,18 @@ namespace imdbclone {
           templateUrl: '/ngApp/views/main.html',
           controller: imdbclone.Controllers.MainController,
           controllerAs: 'vm',
+          //TODO
+          // //get the state by name and change the value of custom data property
+          // $state.get('contacts').data.customData1= 100;
+          //  // then you can go to that state.
+          // $state.go('contacts');
           resolve: {
-            currentUser: ['userService', '$cookieStore', function(userService, $cookieStore) {
-              return userService.getCurrentUser();
+            currentUser: ['userService', '$cookies', function(userService, $cookies) {
+              if($cookies.get('token')) {
+                return userService.getCurrentUser();
+              } else {
+                return null;
+              }
             }]
           }
         })
@@ -60,45 +70,36 @@ namespace imdbclone {
 
       //for authInterceptor factory
       $httpProvider.interceptors.push('authInterceptor');
-    }).factory('authInterceptor', function ($q, $cookies, $location) {
+    }).factory('authInterceptor',
+      ['$q', '$cookies', '$location',
+      function ($q, $cookies, $location) {
       return {
-        // Add authorization token to headers
+        // Add authorization token to headers PER req
         request: function (config) {
-          //because cookies are set by server to client
-          //$cookieStore is worthlesss
-          let cOne = document.cookie.split(';');
-          let cTwo = _.map(cOne, (v) => {
-             return v.split('=');
-          })
-          let cObj = {};
-          _.forEach(cTwo, (v) => {
-            cObj[v[0]] = v[1];
-          });
-
           config.headers = config.headers || {};
-          if (cObj['token']) {
-            config.headers.Authorization = 'Bearer ' + cObj['token'];
+          if ($cookies.get('token')) {
+            config.headers.Authorization = 'Bearer ' + $cookies.get('token');
           }
-
-          console.log(config);
           return config;
         },
 
         // Intercept 401s/500s and redirect you to login
         responseError: function(response) {
           if(response.status === 401) {
-            alert('unauthorized.  please bounce.');
-            $location.path('/login');
+            // good place to explain to the user why or redirect
+            console.info(`this account needs to authenticate to ${response.config.method} ${response.config.url}`);
+          }
+          if(response.status === 403) {
+            alert('unauthorized permission for your account.');
             // good place to explain to the user why or redirect
             // remove any stale tokens
-            $cookies.token;
             return $q.reject(response);
           } else {
             return $q.reject(response);
           }
         }
       }
-    })
+    }])
 
     .run([
       '$rootScope', '$location', 'movieService', 'auth', 'userService',

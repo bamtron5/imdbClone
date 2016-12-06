@@ -2,8 +2,6 @@ import * as mongoose from 'mongoose';
 import * as crypto from 'crypto';
 import * as jwt from 'jsonwebtoken';
 
-//TODO return get currentUser from model
-
 export interface IUser extends mongoose.Document {
   username: { type: String, lowercase: true, unique: true},
   email: { type: String, unique: true, lowercase: true },
@@ -33,8 +31,6 @@ UserSchema.method('setPassword', function(password) {
 
 UserSchema.method('validatePassword', function(password) {
   let hash = crypto.pbkdf2Sync(password, this.salt, 1000, 64, 'sha512').toString('hex');
-  // console.log('HASH:', hash);
-  // console.log('passwordHASH:', this.passwordHash);
   return (hash === this.passwordHash);
 });
 

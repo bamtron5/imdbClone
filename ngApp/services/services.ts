@@ -33,9 +33,6 @@ namespace imdbclone.Services {
         this.LoginResource = $resource('/api/Login/Local');
         this.RegisterResource = $resource('/api/Register');
         this.UserResource = $resource('/api/users/:id');
-        this.isLoggedIn = function(){
-          //TODO
-        }
       }
     }
 
